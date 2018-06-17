@@ -4,42 +4,48 @@ import reca_sequence as re_se
 """Module for drawing the Recamán's sequence"""
 
 class Circle_Drawer:
-	def __init__(self, sequence, size=1, speed='normal', color='black', circle_res=None, shape='classic'):
-		t = turtle.Turtle()
-		t.speed(speed)
-		t.pencolor(color)
-		t.shape(shape)
+	def __init__(self, sequence, speed='normal', pen_color='black', bg_color='white', circle_res=None, shape='classic', hidden=False):
 		
-		self.t = t
 		self.sequence = sequence
-		self._size = size
+		self._speed = speed
+		self._pen_color = pen_color
+		self._bg_color = bg_color
 		self._circle_res = circle_res
+		self._shape = shape
+		self._hidden = hidden
 		
 	def _draw(self):
-		t = self.t
-		screen = t.getscreen()
 		
 		sequence = self.sequence
+		bg_color = self._bg_color
+		hidden = self._hidden
+		speed = self._speed
+		pen_color = self._pen_color
+		shape = self._shape
 		steps = self._circle_res
 		switch = 1
-		size = self._size
 		
-		canvwidth = int(max([abs(sequence[i-1] - sequence[i]) for i in range(1, len(sequence))]) * size)
-		canvheight = int(max(sequence) * size)
+		win_width = max([abs(sequence[i-1] - sequence[i]) for i in range(1, len(sequence))]) * 2
+		win_height = max(sequence) * 2
 		
-		screen.screensize(canvwidth=canvwidth, canvheight=canvheight)
+		turtle.setup()
+		turtle.screensize(win_width, win_height, bg_color)
+		
+		t = turtle.Turtle()
+		if hidden:
+			t.hideturtle()
+		t.speed(speed)
+		t.pencolor(pen_color)
+		t.shape(shape)
 		
 		t.pu()
-		t.sety(-int(canvheight / 2))
+		t.setpos(0, -int(win_height/2))
 		t.pd()
-		
-		print(turtle.screensize())
 		
 		old_num = sequence[0]
 		for i in range(1, len(sequence)):
 			num = sequence[i]
-			radius = (num - old_num) * size * switch
-			print(t.pos())
+			radius = (num - old_num) * switch
 			t.circle(radius, 180, steps=steps)
 			
 			old_num = num
@@ -68,7 +74,7 @@ def main():
 		break
 
 	sequence = re_se.get_sequence(n)
-	cd = Circle_Drawer(sequence, speed='fast')
+	cd = Circle_Drawer(sequence, speed='fastest')
 	cd.draw()
 		
 if __name__ == '__main__':
