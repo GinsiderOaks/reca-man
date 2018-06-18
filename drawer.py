@@ -1,22 +1,53 @@
 import turtle
 import math
 import argparse
-import reca_sequence as re_se
+import reca_sequence as rec_sec
 
 """Module for drawing the Recamán's sequence"""
 
+DEFAULT_SPEED		= 'fastest'
+DEFAULT_PEN_COLOR	= 'black'
+DEFAULT_BG_COLOR	= 'white'
+DEFAULT_CIRCLE_RES	= None
+DEFAULT_SHAPE		= 'classic'
+DEFAULT_HIDDEN		= False
+DEFAULT_SIZE		= 1
+DEFAULT_PEN_SIZE	= 1
+
 class Circle_Drawer:
-	def __init__(self, sequence, speed='normal', pen_color='black', bg_color='white', circle_res=None, shape='classic', hidden=False, size=1, pen_size=1):
+	def __init__(self, 
+		sequence, 
+		speed		=DEFAULT_SPEED, 
+		pencolor	=DEFAULT_PEN_COLOR, 
+		bgcolor	=DEFAULT_BG_COLOR, 
+		circleres	=DEFAULT_CIRCLE_RES, 
+		shape		=DEFAULT_SHAPE, 
+		hidden		=DEFAULT_HIDDEN, 
+		size		=DEFAULT_SIZE, 
+		pensize	=DEFAULT_PEN_SIZE
+		):
 		
 		self.sequence		= sequence
 		self._speed			= speed
-		self._pen_color		= pen_color
-		self._bg_color		= bg_color
-		self._circle_res	= circle_res
+		self._pen_color		= pencolor
+		self._bg_color		= bgcolor
+		self._circle_res	= circleres
 		self._shape			= shape
 		self._hidden		= hidden
 		self._size			= size
-		self._pen_size		= pen_size
+		self._pen_size		= pensize
+		
+	def from_args(sequence, args):
+		return Circle_Drawer(
+			sequence, 
+			args.speed,
+			args.pencolor,
+			args.bgcolor,
+			args.circleres,
+			args.shape,
+			args.hidden,
+			args.size,
+			args.pensize)
 		
 	def _draw(self):
 		
@@ -71,121 +102,65 @@ class Circle_Drawer:
 				
 		except turtle.Terminator:
 			pass
-
-def check_positive(value):
-	if value == None:
-		return value
-	ivalue = int(value)
-	if ivalue <= 0:
-		raise argparse.ArgumentTypeError('{0} is an invalid positive int value'.format(value))
-	return ivalue
-			
-def parse_args():
-
-	parser = argparse.ArgumentParser(description='Parser for input for drawer.')
 	
-	# SEQUENCE RELATED
-	parser.add_argument(
-		'seqlen',
-		type=check_positive,
-		help='The length of the sequence')
-	
-	parser.add_argument(
-		'-sn', '--startnum',
-		nargs='?',
-		type=check_positive,
-		help='The starting number of the sequence')
-		
-	parser.add_argument(
-		'-sj', '--startjump',
-		nargs='?',
-		type=check_positive,
-		help='The starting jump value of the sequence')
-		
-	parser.add_argument(
-		'-jd', '--jumpdelta',
-		nargs='?',
-		type=check_positive,
-		help='The increment of jump')
-		
-	# DRAWING RELATED
+def add_parser_args(parser):
 	parser.add_argument(
 		'-sp', '--speed', 
-		nargs='?', 
-		default='fastest',
 		choices=['slowest', 'slow', 'normal', 'fast', 'fastest'], 
 		help='The speed of the drawer')
 	parser.add_argument(
-		'-pc', '--pencolor',
-		nargs='?',
-		default='black',
+		'-pe', '--pencolor',
 		choices=['black', 'white', 'red', 'green', 'yellow'],
 		help='The color of the pen')
 	parser.add_argument(
 		'-bg', '--bgcolor',
-		nargs='?',
-		default='white',
 		choices=['black', 'white', 'red', 'green', 'yellow'],
 		help='The color of the background')
 	parser.add_argument(
 		'-cr', '--circleres',
-		nargs='?',
-		type=check_positive,
-		default=None,
+		type=int,
 		help='The resolution of the circle (dynamic if non-specified)')
 	parser.add_argument(
-		'-sh', '--shape', 
-		nargs='?', 
-		default='classic',
+		'-sh', '--shape',
 		choices=['arrow', 'turtle', 'circle', 'square', 'triangle', 'classic'], 
 		help='The shape of the turtle')
 	parser.add_argument(
 		'-hi', '--hidden', 
-		nargs='?', 
-		default=False,
-		type=bool, 
+		action='store_true', 
 		help='Should the turtle be hidden?')
 	parser.add_argument(
 		'-si', '--size',
-		nargs='?',
-		type=check_positive,
-		default=1,
+		type=int,
 		help='The size of the drawing')
 	parser.add_argument(
 		'-ps', '--pensize',
-		nargs='?',
-		type=check_positive,
-		default=1,
+		type=int,
 		help='The thickness of the pen')
 		
-	args = parser.parse_args()
-	return args
-		
+	parser.set_defaults(
+		speed		=DEFAULT_SPEED,
+		pencolor	=DEFAULT_PEN_COLOR,
+		bgcolor		=DEFAULT_BG_COLOR,
+		circleres	=DEFAULT_CIRCLE_RES,
+		shape		=DEFAULT_SHAPE,
+		hidden		=DEFAULT_HIDDEN,
+		size		=DEFAULT_SIZE,
+		pensize		=DEFAULT_PEN_SIZE)
+	
 def main():
-	args = parse_args()
 	
-	print(args.__dict__)
+	parser = argparse.ArgumentParser(description='Parser for input for drawer.')
+	subbies = parser.add_subparsers(help='Sub-parsers for input for drawer.')
 	
-	draw_args_dict = {
-		'bg_color':		args.bgcolor, 
-		'circle_res':	args.circleres, 
-		'pen_color':	args.pencolor, 
-		'hidden':		args.hidden, 
-		'speed':		args.speed, 
-		'shape':		args.shape,
-		'size':			args.size,
-		'pen_size':		args.pensize}
-		
-	seq_args = (args.seqlen,)
-	seq_args_dict = {
-		'start_num':	args.startnum,
-		'start_jump':	args.startjump,
-		'jump_delta':	args.jumpdelta}
-	# Removes none-values from seq_args_dict
-	seq_args_dict = {k:v for k,v in seq_args_dict.items() if v is not None}
+	parser_seq = subbies.add_parser('seq', help='Sequence options')
 	
-	sequence = re_se.get_sequence(*seq_args, **seq_args_dict)
-	cd = Circle_Drawer(sequence, **draw_args_dict)
+	add_parser_args(parser)
+	rec_sec.add_parser_args(parser_seq)
+	
+	args = parser.parse_args()
+	
+	sequence = args.get_sequence(args)
+	cd = Circle_Drawer.from_args(sequence, args)
 	cd.draw()
 		
 if __name__ == '__main__':

@@ -1,20 +1,57 @@
 """Small module for generating the Recamán's sequence.
 For more info, see https://oeis.org/A005132"""
 
-def get_sequence(n, start_num=0, start_jump=1, jump_delta=1):
-	"""Function for genereting and returning the sequence"""
-	num = start_num
-	jump = start_jump
+DEFAULT_NUM_START = 0
+DEFAULT_JUMP_START = 1
+DEFAULT_JUMP_DELTA = 1
+
+def add_parser_args(parser):
+	parser.add_argument(
+		'seqlen',
+		type=int,
+		help='The length of the sequence')
+	
+	parser.add_argument(
+		'-ns', '--numstart',
+		nargs='?',
+		type=int,
+		help='The starting number of the sequence')
+		
+	parser.add_argument(
+		'-js', '--jumpstart',
+		nargs='?',
+		type=int,
+		help='The starting jump value of the sequence')
+		
+	parser.add_argument(
+		'-jd', '--jumpdelta',
+		nargs='?',
+		type=int,
+		help='The increment of jump')
+		
+	parser.set_defaults(
+		get_sequence=get_sequence_from_args,
+		numstart	=DEFAULT_NUM_START,
+		jumpstart	=DEFAULT_JUMP_START,
+		jumpdelta	=DEFAULT_JUMP_DELTA)
+
+def get_sequence_from_args(args):
+	return get_sequence(args.seqlen, args.numstart, args.jumpstart, args.jumpdelta)
+	
+def get_sequence(seqlen, startnum=0, startjump=1, jumpdelta=1):
+	"""Function for generating and returning the sequence"""
+	num = startnum
+	jump = startjump
 	seq_set = set()
 	seq_list = []
 	
-	for i in range(n):
+	for i in range(seqlen):
 	
 		seq_set = seq_set | {num}
 		seq_list.append(num)
 		
 		num = do_jump(num, jump, seq_set)
-		jump += jump_delta
+		jump += jumpdelta
 	
 	return seq_list
 	
