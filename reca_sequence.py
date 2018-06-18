@@ -1,10 +1,10 @@
 """Small module for generating the Recamán's sequence.
 For more info, see https://oeis.org/A005132"""
 
-def get_sequence(n):
+def get_sequence(n, start_num=0, start_jump=1, jump_delta=1):
 	"""Function for genereting and returning the sequence"""
-	num = 0
-	jump = 1
+	num = start_num
+	jump = start_jump
 	seq_set = set()
 	seq_list = []
 	
@@ -14,7 +14,7 @@ def get_sequence(n):
 		seq_list.append(num)
 		
 		num = do_jump(num, jump, seq_set)
-		jump += 1
+		jump += jump_delta
 	
 	return seq_list
 	
