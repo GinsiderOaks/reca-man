@@ -149,13 +149,10 @@ def add_parser_args(parser):
 	
 def main():
 	
-	parser = argparse.ArgumentParser(description='Parser for input for drawer.')
-	subbies = parser.add_subparsers(help='Sub-parsers for input for drawer.')
-	
-	parser_seq = subbies.add_parser('seq', help='Sequence options')
+	parser = argparse.ArgumentParser(description='Parser for input for drawer and sequence.')
 	
 	add_parser_args(parser)
-	rec_sec.add_parser_args(parser_seq)
+	rec_sec.add_parser_args(parser)
 	
 	args = parser.parse_args()
 	
