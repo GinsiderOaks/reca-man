@@ -110,11 +110,11 @@ def add_parser_args(parser):
 		help='The speed of the drawer')
 	parser.add_argument(
 		'-pe', '--pencolor',
-		choices=['black', 'white', 'red', 'green', 'yellow'],
+		choices=['black', 'white', 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'orange'],
 		help='The color of the pen')
 	parser.add_argument(
 		'-bg', '--bgcolor',
-		choices=['black', 'white', 'red', 'green', 'yellow'],
+		choices=['black', 'white', 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'orange'],
 		help='The color of the background')
 	parser.add_argument(
 		'-cr', '--circleres',

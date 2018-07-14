@@ -8,7 +8,7 @@ DEFAULT_JUMP_DELTA = 1
 
 def add_parser_args(parser):
 	parser.add_argument(
-		'-sl', '--seqlen',
+		'seqlen',
 		type=int,
 		help='The length of the sequence')
 		
